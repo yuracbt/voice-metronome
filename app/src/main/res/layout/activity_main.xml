@@ -200,6 +200,90 @@
                 android:text="Clicks" />
         </LinearLayout>
 
+        <!-- Click sound (only for the Clicks voice) -->
+        <LinearLayout
+            android:id="@+id/clicksOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click sound"
+                android:textSize="16sp"
+                android:textColor="#9E9E9E"
+                android:layout_marginTop="20dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp">
+
+                <Button
+                    android:id="@+id/click0"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Classic" />
+
+                <Button
+                    android:id="@+id/click1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Wood" />
+
+                <Button
+                    android:id="@+id/click2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Digital" />
+
+                <Button
+                    android:id="@+id/click3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Cowbell" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Accent: which beat gets the stress -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Accent on"
+            android:textSize="16sp"
+            android:textColor="#9E9E9E"
+            android:layout_marginTop="20dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+
+            <Button
+                android:id="@+id/accentFirst"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="1st beat"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/accentLast"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Last beat"
+                android:textSize="18sp" />
+        </LinearLayout>
+
         <!-- Start / Stop -->
         <Button
             android:id="@+id/startStop"
