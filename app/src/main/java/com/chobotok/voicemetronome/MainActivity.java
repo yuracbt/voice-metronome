@@ -1,8 +1,8 @@
 package com.chobotok.voicemetronome;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.res.AssetFileDescriptor;
-import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
 import android.os.Bundle;
@@ -42,6 +42,7 @@ public class MainActivity extends Activity {
     private boolean eighthMode = false;
     private int clickSoundIndex = 0;
     private boolean accentLast = false;
+    private boolean andIsClick = false;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
     private long nextBeatTime;
@@ -62,6 +63,9 @@ public class MainActivity extends Activity {
     private Button accentFirst;
     private Button accentLastBtn;
     private LinearLayout clicksOptions;
+    private Button andVoice;
+    private Button andClick;
+    private LinearLayout andOptions;
 
     private final Runnable beatRunnable = new Runnable() {
         @Override
@@ -159,6 +163,14 @@ public class MainActivity extends Activity {
         accentFirst.setOnClickListener(v -> setAccentLast(false));
         accentLastBtn.setOnClickListener(v -> setAccentLast(true));
 
+        andOptions = findViewById(R.id.andOptions);
+        andVoice = findViewById(R.id.andVoice);
+        andClick = findViewById(R.id.andClick);
+        andVoice.setOnClickListener(v -> setAndIsClick(false));
+        andClick.setOnClickListener(v -> setAndIsClick(true));
+
+        findViewById(R.id.appTitle).setOnClickListener(v -> showAbout());
+
         startStop.setOnClickListener(v -> {
             if (running) stopMetro(); else startMetro();
         });
@@ -166,9 +178,25 @@ public class MainActivity extends Activity {
         setVoice(0);
         setClickSound(0);
         setAccentLast(false);
+        setAndIsClick(false);
         setEighthMode(false);
         rebuildDots();
         updateBpmLabel();
+    }
+
+    /** Short About popup: what the app does, and who wrote it. */
+    private void showAbout() {
+        String version = "";
+        try {
+            version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        } catch (Exception ignored) { }
+        new AlertDialog.Builder(this)
+                .setTitle("Voice Metronome " + version)
+                .setMessage("Counts the beat out loud in a human voice — 1 2 3 4, " +
+                        "or 1 & 2 & when you switch on eighth notes. Made for young " +
+                        "musicians learning to feel the beat.\n\nWritten by Yuriy Chobotok")
+                .setPositiveButton("OK", null)
+                .show();
     }
 
     private void loadSounds() {
@@ -258,6 +286,14 @@ public class MainActivity extends Activity {
             playClick(map, isAccent(beat), isAnd);
             return;
         }
+        if (isAnd && andIsClick) {
+            // "one"-click-"two"-click: the off-beat ticks with the chosen click sound
+            Map<String, Integer> cmap = sounds.get("clicks");
+            if (cmap != null) {
+                playClick(cmap, false, true);
+                return;
+            }
+        }
         String clip = isAnd ? "and" : NUMS[beat];
         Integer id = map.get(clip);
         if (id == null || id == 0) return;
@@ -287,13 +323,13 @@ public class MainActivity extends Activity {
 
     private void updateBeatUi(int beat) {
         beatNumber.setText(String.valueOf(beat + 1));
-        beatNumber.setTextColor(isAccent(beat) ? Color.parseColor("#FFB74D")
-                : Color.parseColor("#EDEDED"));
+        beatNumber.setTextColor(isAccent(beat) ? getColor(R.color.cozy_accent)
+                : getColor(R.color.cozy_ink));
         pulseBeatNumber();
         for (int i = 0; i < dotsRow.getChildCount(); i++) {
             TextView dot = (TextView) dotsRow.getChildAt(i);
-            dot.setTextColor(i == beat ? Color.parseColor("#FFB74D")
-                    : Color.parseColor("#424242"));
+            dot.setTextColor(i == beat ? getColor(R.color.cozy_accent)
+                    : getColor(R.color.cozy_dot_off));
         }
     }
 
@@ -305,18 +341,18 @@ public class MainActivity extends Activity {
     private void updateEighthUi(int beat, boolean isAnd) {
         if (isAnd) {
             beatNumber.setText("&");
-            beatNumber.setTextColor(Color.parseColor("#90CAF9"));
+            beatNumber.setTextColor(getColor(R.color.cozy_and));
         } else {
             beatNumber.setText(String.valueOf(beat + 1));
-            beatNumber.setTextColor(isAccent(beat) ? Color.parseColor("#FFB74D")
-                    : Color.parseColor("#EDEDED"));
+            beatNumber.setTextColor(isAccent(beat) ? getColor(R.color.cozy_accent)
+                    : getColor(R.color.cozy_ink));
         }
         pulseBeatNumber();
         for (int i = 0; i < dotsRow.getChildCount(); i++) {
             TextView dot = (TextView) dotsRow.getChildAt(i);
             dot.setTextColor(i == beat
-                    ? Color.parseColor(isAnd ? "#FFCC80" : "#FFB74D")
-                    : Color.parseColor("#424242"));
+                    ? getColor(isAnd ? R.color.cozy_and_dot : R.color.cozy_accent)
+                    : getColor(R.color.cozy_dot_off));
         }
     }
 
@@ -332,7 +368,7 @@ public class MainActivity extends Activity {
             TextView dot = new TextView(this);
             dot.setText("●");
             dot.setTextSize(28);
-            dot.setTextColor(Color.parseColor("#424242"));
+            dot.setTextColor(getColor(R.color.cozy_dot_off));
             dot.setPadding(10, 0, 10, 0);
             dotsRow.addView(dot);
         }
@@ -341,7 +377,7 @@ public class MainActivity extends Activity {
     private void clearDots() {
         for (int i = 0; i < dotsRow.getChildCount(); i++) {
             ((TextView) dotsRow.getChildAt(i))
-                    .setTextColor(Color.parseColor("#424242"));
+                    .setTextColor(getColor(R.color.cozy_dot_off));
         }
     }
 
@@ -371,20 +407,30 @@ public class MainActivity extends Activity {
     /** Quarter-note counting ("1 2 3 4") vs eighth-note counting ("1 & 2 &"). */
     private void setEighthMode(boolean eighth) {
         eighthMode = eighth;
-        int on = Color.parseColor("#FFB74D");
-        int off = Color.parseColor("#9E9E9E");
+        int on = getColor(R.color.cozy_accent);
+        int off = getColor(R.color.cozy_muted);
         countQuarter.setTextColor(eighth ? off : on);
         countEighth.setTextColor(eighth ? on : off);
+        andOptions.setVisibility(eighth ? LinearLayout.VISIBLE : LinearLayout.GONE);
         if (running) {
             currentBeat = 0;
             currentStep = 0;
         }
     }
 
+    /** What the off-beat sounds like in eighth-note mode: voice "and" or a click. */
+    private void setAndIsClick(boolean click) {
+        andIsClick = click;
+        int on = getColor(R.color.cozy_accent);
+        int off = getColor(R.color.cozy_muted);
+        andVoice.setTextColor(click ? off : on);
+        andClick.setTextColor(click ? on : off);
+    }
+
     private void setVoice(int idx) {
         voiceIndex = idx;
-        int on = Color.parseColor("#FFB74D");
-        int off = Color.parseColor("#9E9E9E");
+        int on = getColor(R.color.cozy_accent);
+        int off = getColor(R.color.cozy_muted);
         for (int i = 0; i < voiceButtons.length; i++) {
             voiceButtons[i].setTextColor(i == idx ? on : off);
         }
@@ -393,8 +439,8 @@ public class MainActivity extends Activity {
 
     private void setClickSound(int idx) {
         clickSoundIndex = idx;
-        int on = Color.parseColor("#FFB74D");
-        int off = Color.parseColor("#9E9E9E");
+        int on = getColor(R.color.cozy_accent);
+        int off = getColor(R.color.cozy_muted);
         for (int i = 0; i < clickButtons.length; i++) {
             clickButtons[i].setTextColor(i == idx ? on : off);
         }
@@ -402,8 +448,8 @@ public class MainActivity extends Activity {
 
     private void setAccentLast(boolean last) {
         accentLast = last;
-        int on = Color.parseColor("#FFB74D");
-        int off = Color.parseColor("#9E9E9E");
+        int on = getColor(R.color.cozy_accent);
+        int off = getColor(R.color.cozy_muted);
         accentFirst.setTextColor(last ? off : on);
         accentLastBtn.setTextColor(last ? on : off);
     }
