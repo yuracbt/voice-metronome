@@ -45,10 +45,25 @@ public class MainActivity extends Activity {
     private boolean andIsClick = false;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
-    private long nextBeatTime;
+    /** Exact fractional target time of the next slot — no truncation drift. */
+    private double nextStepTime;
     private int currentBeat;
     private int currentStep; // eighth-note slots: 0..beatsPerBar*2-1
     private final List<Long> taps = new ArrayList<>();
+
+    /** Exact milliseconds per slot: 60,000/BPM, halved for eighth notes. */
+    private double stepIntervalMs() {
+        return (eighthMode ? 30000.0 : 60000.0) / bpm;
+    }
+
+    /**
+     * Voice playback rate that grows with tempo so the counting keeps up:
+     * 1.0x up to 120 BPM, rising to 1.4x at 240 BPM.
+     */
+    private float voiceRate() {
+        if (bpm <= 120) return 1.0f;
+        return 1.0f + (bpm - 120) * (0.4f / 120f);
+    }
 
     private TextView beatNumber;
     private TextView bpmLabel;
@@ -78,14 +93,13 @@ public class MainActivity extends Activity {
                 playEighth(beat, isAnd);
                 updateEighthUi(beat, isAnd);
                 currentStep = (currentStep + 1) % (beatsPerBar * 2);
-                nextBeatTime += 30000L / bpm;
             } else {
                 playBeat(currentBeat);
                 updateBeatUi(currentBeat);
                 currentBeat = (currentBeat + 1) % beatsPerBar;
-                nextBeatTime += 60000L / bpm;
             }
-            long delay = nextBeatTime - SystemClock.uptimeMillis();
+            nextStepTime += stepIntervalMs();
+            long delay = (long) (nextStepTime - SystemClock.uptimeMillis());
             handler.postDelayed(this, Math.max(0, delay));
         }
     };
@@ -254,7 +268,7 @@ public class MainActivity extends Activity {
         Integer id = map.get(clip);
         if (id == null || id == 0) return;
         float vol = isAccent(beat) ? 1.0f : 0.72f;
-        soundPool.play(id, vol, vol, 1, 0, 1.0f);
+        soundPool.play(id, vol, vol, 1, 0, voiceRate());
     }
 
     /** One click tick. Accented beats ring brighter; "and" ticks stay soft. */
@@ -299,14 +313,14 @@ public class MainActivity extends Activity {
         if (id == null || id == 0) return;
         // the "and" stays a touch softer so the beat remains the anchor
         float vol = isAnd ? 0.6f : (isAccent(beat) ? 1.0f : 0.72f);
-        soundPool.play(id, vol, vol, 1, 0, 1.0f);
+        soundPool.play(id, vol, vol, 1, 0, voiceRate());
     }
 
     private void startMetro() {
         running = true;
         currentBeat = 0;
         currentStep = 0;
-        nextBeatTime = SystemClock.uptimeMillis();
+        nextStepTime = SystemClock.uptimeMillis();
         handler.post(beatRunnable);
         startStop.setText("STOP");
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
