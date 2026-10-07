@@ -25,6 +25,9 @@ public class MainActivity extends Activity {
     private static final String[] VOICES = {"helio", "aria", "magnus", "clicks"};
     private static final String[] NUMS =
             {"one", "two", "three", "four", "five", "six", "seven", "eight"};
+    private static final String[] CLICK_SOUNDS = {"classic", "wood", "digital", "cowbell"};
+    /** Asset file per click sound; "classic" keeps the original hi/lo pair. */
+    private static final String[] CLICK_FILES = {null, "wood", "digital", "cowbell"};
 
     private static final int MIN_BPM = 30;
     private static final int MAX_BPM = 240;
@@ -37,6 +40,8 @@ public class MainActivity extends Activity {
     private int voiceIndex = 0;
     private boolean running = false;
     private boolean eighthMode = false;
+    private int clickSoundIndex = 0;
+    private boolean accentLast = false;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
     private long nextBeatTime;
@@ -53,6 +58,10 @@ public class MainActivity extends Activity {
     private Button[] voiceButtons;
     private Button countQuarter;
     private Button countEighth;
+    private Button[] clickButtons;
+    private Button accentFirst;
+    private Button accentLastBtn;
+    private LinearLayout clicksOptions;
 
     private final Runnable beatRunnable = new Runnable() {
         @Override
@@ -135,11 +144,28 @@ public class MainActivity extends Activity {
         countQuarter.setOnClickListener(v -> setEighthMode(false));
         countEighth.setOnClickListener(v -> setEighthMode(true));
 
+        clicksOptions = findViewById(R.id.clicksOptions);
+        clickButtons = new Button[]{
+                findViewById(R.id.click0),
+                findViewById(R.id.click1),
+                findViewById(R.id.click2),
+                findViewById(R.id.click3)};
+        for (int i = 0; i < clickButtons.length; i++) {
+            final int idx = i;
+            clickButtons[i].setOnClickListener(v -> setClickSound(idx));
+        }
+        accentFirst = findViewById(R.id.accentFirst);
+        accentLastBtn = findViewById(R.id.accentLast);
+        accentFirst.setOnClickListener(v -> setAccentLast(false));
+        accentLastBtn.setOnClickListener(v -> setAccentLast(true));
+
         startStop.setOnClickListener(v -> {
             if (running) stopMetro(); else startMetro();
         });
 
         setVoice(0);
+        setClickSound(0);
+        setAccentLast(false);
         setEighthMode(false);
         rebuildDots();
         updateBpmLabel();
@@ -151,6 +177,9 @@ public class MainActivity extends Activity {
             if ("clicks".equals(voice)) {
                 map.put("hi", loadClip(voice, "hi", ".wav"));
                 map.put("lo", loadClip(voice, "lo", ".wav"));
+                map.put("wood", loadClip(voice, "wood", ".wav"));
+                map.put("digital", loadClip(voice, "digital", ".wav"));
+                map.put("cowbell", loadClip(voice, "cowbell", ".wav"));
             } else {
                 for (String n : NUMS) {
                     map.put(n, loadClip(voice, n, ".mp3"));
@@ -181,23 +210,41 @@ public class MainActivity extends Activity {
         return "clicks".equals(VOICES[voiceIndex]);
     }
 
+    /** Which beat carries the stress: first of the bar, or last. */
+    private boolean isAccent(int beat) {
+        return accentLast ? beat == beatsPerBar - 1 : beat == 0;
+    }
+
     private void playBeat(int beat) {
         Map<String, Integer> map = sounds.get(VOICES[voiceIndex]);
         if (map == null) return;
         if (isClicks()) {
-            // sharp click bits: accented on beat one of the bar
-            String clip = (beat == 0) ? "hi" : "lo";
-            Integer id = map.get(clip);
-            if (id == null || id == 0) return;
-            float vol = (beat == 0) ? 1.0f : 0.8f;
-            soundPool.play(id, vol, vol, 1, 0, 1.0f);
+            playClick(map, isAccent(beat), false);
             return;
         }
         String clip = NUMS[beat];
         Integer id = map.get(clip);
         if (id == null || id == 0) return;
-        float vol = (beat == 0) ? 1.0f : 0.72f;
+        float vol = isAccent(beat) ? 1.0f : 0.72f;
         soundPool.play(id, vol, vol, 1, 0, 1.0f);
+    }
+
+    /** One click tick. Accented beats ring brighter; "and" ticks stay soft. */
+    private void playClick(Map<String, Integer> map, boolean accented, boolean isAnd) {
+        Integer id;
+        float rate = 1.0f;
+        float vol;
+        if (clickSoundIndex == 0) {
+            // classic: the original hi/lo pair
+            id = map.get(accented ? "hi" : "lo");
+            vol = isAnd ? 0.35f : (accented ? 1.0f : 0.8f);
+        } else {
+            id = map.get(CLICK_FILES[clickSoundIndex]);
+            vol = isAnd ? 0.35f : (accented ? 1.0f : 0.75f);
+            if (accented) rate = 1.2f; // accent rings a touch brighter
+        }
+        if (id == null || id == 0) return;
+        soundPool.play(id, vol, vol, 1, 0, rate);
     }
 
     /**
@@ -208,21 +255,14 @@ public class MainActivity extends Activity {
         Map<String, Integer> map = sounds.get(VOICES[voiceIndex]);
         if (map == null) return;
         if (isClicks()) {
-            if (isAnd) {
-                // soft tick between the beats
-                Integer id = map.get("lo");
-                if (id == null || id == 0) return;
-                soundPool.play(id, 0.35f, 0.35f, 1, 0, 1.0f);
-            } else {
-                playBeat(beat);
-            }
+            playClick(map, isAccent(beat), isAnd);
             return;
         }
         String clip = isAnd ? "and" : NUMS[beat];
         Integer id = map.get(clip);
         if (id == null || id == 0) return;
         // the "and" stays a touch softer so the beat remains the anchor
-        float vol = isAnd ? 0.6f : (beat == 0 ? 1.0f : 0.72f);
+        float vol = isAnd ? 0.6f : (isAccent(beat) ? 1.0f : 0.72f);
         soundPool.play(id, vol, vol, 1, 0, 1.0f);
     }
 
@@ -247,7 +287,7 @@ public class MainActivity extends Activity {
 
     private void updateBeatUi(int beat) {
         beatNumber.setText(String.valueOf(beat + 1));
-        beatNumber.setTextColor(beat == 0 ? Color.parseColor("#FFB74D")
+        beatNumber.setTextColor(isAccent(beat) ? Color.parseColor("#FFB74D")
                 : Color.parseColor("#EDEDED"));
         pulseBeatNumber();
         for (int i = 0; i < dotsRow.getChildCount(); i++) {
@@ -268,7 +308,7 @@ public class MainActivity extends Activity {
             beatNumber.setTextColor(Color.parseColor("#90CAF9"));
         } else {
             beatNumber.setText(String.valueOf(beat + 1));
-            beatNumber.setTextColor(beat == 0 ? Color.parseColor("#FFB74D")
+            beatNumber.setTextColor(isAccent(beat) ? Color.parseColor("#FFB74D")
                     : Color.parseColor("#EDEDED"));
         }
         pulseBeatNumber();
@@ -348,6 +388,24 @@ public class MainActivity extends Activity {
         for (int i = 0; i < voiceButtons.length; i++) {
             voiceButtons[i].setTextColor(i == idx ? on : off);
         }
+        clicksOptions.setVisibility(isClicks() ? LinearLayout.VISIBLE : LinearLayout.GONE);
+    }
+
+    private void setClickSound(int idx) {
+        clickSoundIndex = idx;
+        int on = Color.parseColor("#FFB74D");
+        int off = Color.parseColor("#9E9E9E");
+        for (int i = 0; i < clickButtons.length; i++) {
+            clickButtons[i].setTextColor(i == idx ? on : off);
+        }
+    }
+
+    private void setAccentLast(boolean last) {
+        accentLast = last;
+        int on = Color.parseColor("#FFB74D");
+        int off = Color.parseColor("#9E9E9E");
+        accentFirst.setTextColor(last ? off : on);
+        accentLastBtn.setTextColor(last ? on : off);
     }
 
     private void onTap() {
