@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#121212"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Voice Metronome"
+            android:textSize="22sp"
+            android:textColor="#EDEDED"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Big beat display -->
+        <TextView
+            android:id="@+id/beatNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="–"
+            android:textSize="110sp"
+            android:textColor="#FFB74D"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/dotsRow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- BPM -->
+        <TextView
+            android:id="@+id/bpmLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="120 BPM"
+            android:textSize="34sp"
+            android:textColor="#EDEDED" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <Button
+                android:id="@+id/bpmMinus"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:text="−"
+                android:textSize="24sp" />
+
+            <SeekBar
+                android:id="@+id/bpmSeek"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:max="210" />
+
+            <Button
+                android:id="@+id/bpmPlus"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:text="+"
+                android:textSize="24sp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/tapButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tap tempo"
+            android:layout_marginTop="8dp" />
+
+        <!-- Beats per bar -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Beats per bar"
+            android:textSize="16sp"
+            android:textColor="#9E9E9E"
+            android:layout_marginTop="20dp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="4dp">
+
+            <Button
+                android:id="@+id/beatsMinus"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:text="−"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/beatsLabel"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:text="4"
+                android:textSize="30sp"
+                android:gravity="center"
+                android:textColor="#EDEDED" />
+
+            <Button
+                android:id="@+id/beatsPlus"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:text="+"
+                android:textSize="24sp" />
+        </LinearLayout>
+
+        <!-- Count: quarter notes vs eighth notes -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Count"
+            android:textSize="16sp"
+            android:textColor="#9E9E9E"
+            android:layout_marginTop="20dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+
+            <Button
+                android:id="@+id/countQuarter"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="1 2 3 4"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/countEighth"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="1 &amp; 2 &amp;"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <!-- Voice -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Voice"
+            android:textSize="16sp"
+            android:textColor="#9E9E9E"
+            android:layout_marginTop="20dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+
+            <Button
+                android:id="@+id/voice0"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Helio" />
+
+            <Button
+                android:id="@+id/voice1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Aria" />
+
+            <Button
+                android:id="@+id/voice2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Magnus" />
+
+            <Button
+                android:id="@+id/voice3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Clicks" />
+        </LinearLayout>
+
+        <!-- Start / Stop -->
+        <Button
+            android:id="@+id/startStop"
+            android:layout_width="match_parent"
+            android:layout_height="84dp"
+            android:text="START"
+            android:textSize="26sp"
+            android:layout_marginTop="28dp"
+            android:layout_marginBottom="16dp" />
+
+    </LinearLayout>
+</ScrollView>
