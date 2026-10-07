@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#121212"
+    android:background="@color/cozy_bg"
     android:fillViewport="true">
 
     <LinearLayout
@@ -13,11 +13,13 @@
         android:padding="20dp">
 
         <TextView
+            android:id="@+id/appTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Voice Metronome"
             android:textSize="22sp"
-            android:textColor="#EDEDED"
+            android:textStyle="bold"
+            android:textColor="@color/cozy_ink"
             android:layout_marginBottom="8dp" />
 
         <!-- Big beat display -->
@@ -27,7 +29,7 @@
             android:layout_height="wrap_content"
             android:text="–"
             android:textSize="110sp"
-            android:textColor="#FFB74D"
+            android:textColor="@color/cozy_accent"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -45,7 +47,7 @@
             android:layout_height="wrap_content"
             android:text="120 BPM"
             android:textSize="34sp"
-            android:textColor="#EDEDED" />
+            android:textColor="@color/cozy_ink" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -58,7 +60,9 @@
                 android:layout_width="56dp"
                 android:layout_height="56dp"
                 android:text="−"
-                android:textSize="24sp" />
+                android:textSize="24sp"
+                android:textColor="@color/cozy_ink"
+                android:backgroundTint="@color/cozy_btn_bg" />
 
             <SeekBar
                 android:id="@+id/bpmSeek"
@@ -74,7 +78,9 @@
                 android:layout_width="56dp"
                 android:layout_height="56dp"
                 android:text="+"
-                android:textSize="24sp" />
+                android:textSize="24sp"
+                android:textColor="@color/cozy_ink"
+                android:backgroundTint="@color/cozy_btn_bg" />
         </LinearLayout>
 
         <Button
@@ -82,6 +88,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Tap tempo"
+            android:textColor="@color/cozy_ink"
+            android:backgroundTint="@color/cozy_btn_bg"
             android:layout_marginTop="8dp" />
 
         <!-- Beats per bar -->
@@ -90,7 +98,7 @@
             android:layout_height="wrap_content"
             android:text="Beats per bar"
             android:textSize="16sp"
-            android:textColor="#9E9E9E"
+            android:textColor="@color/cozy_muted"
             android:layout_marginTop="20dp" />
 
         <LinearLayout
@@ -105,7 +113,9 @@
                 android:layout_width="56dp"
                 android:layout_height="56dp"
                 android:text="−"
-                android:textSize="24sp" />
+                android:textSize="24sp"
+                android:textColor="@color/cozy_ink"
+                android:backgroundTint="@color/cozy_btn_bg" />
 
             <TextView
                 android:id="@+id/beatsLabel"
@@ -114,14 +124,16 @@
                 android:text="4"
                 android:textSize="30sp"
                 android:gravity="center"
-                android:textColor="#EDEDED" />
+                android:textColor="@color/cozy_ink" />
 
             <Button
                 android:id="@+id/beatsPlus"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
                 android:text="+"
-                android:textSize="24sp" />
+                android:textSize="24sp"
+                android:textColor="@color/cozy_ink"
+                android:backgroundTint="@color/cozy_btn_bg" />
         </LinearLayout>
 
         <!-- Count: quarter notes vs eighth notes -->
@@ -130,7 +142,7 @@
             android:layout_height="wrap_content"
             android:text="Count"
             android:textSize="16sp"
-            android:textColor="#9E9E9E"
+            android:textColor="@color/cozy_muted"
             android:layout_marginTop="20dp" />
 
         <LinearLayout
@@ -145,7 +157,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="1 2 3 4"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:textColor="@color/cozy_ink"
+                android:backgroundTint="@color/cozy_btn_bg" />
 
             <Button
                 android:id="@+id/countEighth"
@@ -153,7 +167,53 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="1 &amp; 2 &amp;"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:textColor="@color/cozy_ink"
+                android:backgroundTint="@color/cozy_btn_bg" />
+        </LinearLayout>
+
+        <!-- What the "and" sounds like (eighth-note mode only) -->
+        <LinearLayout
+            android:id="@+id/andOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="The &quot;and&quot; sounds like"
+                android:textSize="16sp"
+                android:textColor="@color/cozy_muted"
+                android:layout_marginTop="12dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp">
+
+                <Button
+                    android:id="@+id/andVoice"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Voice"
+                    android:textSize="18sp"
+                    android:textColor="@color/cozy_ink"
+                    android:backgroundTint="@color/cozy_btn_bg" />
+
+                <Button
+                    android:id="@+id/andClick"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Click"
+                    android:textSize="18sp"
+                    android:textColor="@color/cozy_ink"
+                    android:backgroundTint="@color/cozy_btn_bg" />
+            </LinearLayout>
         </LinearLayout>
 
         <!-- Voice -->
@@ -162,7 +222,7 @@
             android:layout_height="wrap_content"
             android:text="Voice"
             android:textSize="16sp"
-            android:textColor="#9E9E9E"
+            android:textColor="@color/cozy_muted"
             android:layout_marginTop="20dp" />
 
         <LinearLayout
@@ -176,28 +236,36 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Helio" />
+                android:text="Helio"
+                android:textColor="@color/cozy_ink"
+                android:backgroundTint="@color/cozy_btn_bg" />
 
             <Button
                 android:id="@+id/voice1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Aria" />
+                android:text="Aria"
+                android:textColor="@color/cozy_ink"
+                android:backgroundTint="@color/cozy_btn_bg" />
 
             <Button
                 android:id="@+id/voice2"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Magnus" />
+                android:text="Magnus"
+                android:textColor="@color/cozy_ink"
+                android:backgroundTint="@color/cozy_btn_bg" />
 
             <Button
                 android:id="@+id/voice3"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Clicks" />
+                android:text="Clicks"
+                android:textColor="@color/cozy_ink"
+                android:backgroundTint="@color/cozy_btn_bg" />
         </LinearLayout>
 
         <!-- Click sound (only for the Clicks voice) -->
@@ -213,7 +281,7 @@
                 android:layout_height="wrap_content"
                 android:text="Click sound"
                 android:textSize="16sp"
-                android:textColor="#9E9E9E"
+                android:textColor="@color/cozy_muted"
                 android:layout_marginTop="20dp" />
 
             <LinearLayout
@@ -227,28 +295,36 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Classic" />
+                    android:text="Classic"
+                    android:textColor="@color/cozy_ink"
+                    android:backgroundTint="@color/cozy_btn_bg" />
 
                 <Button
                     android:id="@+id/click1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Wood" />
+                    android:text="Wood"
+                    android:textColor="@color/cozy_ink"
+                    android:backgroundTint="@color/cozy_btn_bg" />
 
                 <Button
                     android:id="@+id/click2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Digital" />
+                    android:text="Digital"
+                    android:textColor="@color/cozy_ink"
+                    android:backgroundTint="@color/cozy_btn_bg" />
 
                 <Button
                     android:id="@+id/click3"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Cowbell" />
+                    android:text="Cowbell"
+                    android:textColor="@color/cozy_ink"
+                    android:backgroundTint="@color/cozy_btn_bg" />
             </LinearLayout>
         </LinearLayout>
 
@@ -258,7 +334,7 @@
             android:layout_height="wrap_content"
             android:text="Accent on"
             android:textSize="16sp"
-            android:textColor="#9E9E9E"
+            android:textColor="@color/cozy_muted"
             android:layout_marginTop="20dp" />
 
         <LinearLayout
@@ -273,7 +349,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="1st beat"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:textColor="@color/cozy_ink"
+                android:backgroundTint="@color/cozy_btn_bg" />
 
             <Button
                 android:id="@+id/accentLast"
@@ -281,7 +359,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Last beat"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:textColor="@color/cozy_ink"
+                android:backgroundTint="@color/cozy_btn_bg" />
         </LinearLayout>
 
         <!-- Start / Stop -->
@@ -291,6 +371,8 @@
             android:layout_height="84dp"
             android:text="START"
             android:textSize="26sp"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/cozy_button_primary"
             android:layout_marginTop="28dp"
             android:layout_marginBottom="16dp" />
 
