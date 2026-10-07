@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Cozy palette: warm cream, espresso ink, pumpkin accent -->
+    <color name="cozy_bg">#FAF3E7</color>
+    <color name="cozy_ink">#4E342E</color>
+    <color name="cozy_muted">#A1887F</color>
+    <color name="cozy_accent">#E07B2E</color>
+    <color name="cozy_accent_deep">#BE5F18</color>
+    <color name="cozy_and">#5B9AAE</color>
+    <color name="cozy_dot_off">#D9CBB8</color>
+    <color name="cozy_and_dot">#F2C078</color>
+    <color name="cozy_btn_bg">#F1E4CC</color>
+    <color name="cozy_card">#FFFDF8</color>
+</resources>
