@@ -29,8 +29,8 @@ $BT/aapt2 link -o $OUT/app-unsigned.apk \
   --java $OUT/gen \
   --min-sdk-version 26 \
   --target-sdk-version 34 \
-  --version-code 7 \
-  --version-name 1.6 \
+  --version-code 8 \
+  --version-name 1.7 \
   $OUT/compiled_res.zip
 
 echo "== javac =="
