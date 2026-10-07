@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.VoiceMetronome" parent="android:Theme.Material.NoActionBar">
-        <item name="android:windowBackground">#121212</item>
-        <item name="android:colorBackground">#121212</item>
-        <item name="android:textColor">#EDEDED</item>
+    <style name="Theme.VoiceMetronome" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/cozy_bg</item>
+        <item name="android:colorBackground">@color/cozy_bg</item>
+        <item name="android:textColor">@color/cozy_ink</item>
     </style>
 </resources>
